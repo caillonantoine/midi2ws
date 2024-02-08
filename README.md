@@ -1,6 +1,6 @@
 # Midi to Websocket
 
-You need `node` installed on your machine.
+You need [node](https://nodejs.org/) installed on your machine.
 
 Quickstart:
 
