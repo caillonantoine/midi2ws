@@ -3,6 +3,7 @@ const websockets = require("ws");
 const prompt = require("prompt-sync")({ sigint: true });
 
 let ccList = [];
+let rateLimiter = 40;
 
 async function main() {
   // select and open midi port
@@ -21,7 +22,7 @@ async function main() {
       ccList.push(message[1]);
       setTimeout(() => {
         ccList.splice(ccList.indexOf(message[1]), 1);
-      }, 100);
+      }, rateLimiter);
     }
   });
   console.log("listening to port", input.getPortName(port));
@@ -39,7 +40,7 @@ async function main() {
         ccList.push(message[1]);
         setTimeout(() => {
           ccList.splice(ccList.indexOf(message[1]), 1);
-        }, 40);
+        }, rateLimiter);
       }
     });
   });
