@@ -1,10 +1,19 @@
 const midi = require("midi");
 const websockets = require("ws");
+const prompt = require("prompt-sync")({ sigint: true });
 
 async function main() {
   const input = new midi.Input();
-  input.openPort(0);
-  console.log("listening to port", input.getPortName(0));
+
+  console.log("Available midi inputs:");
+  for (let i = 0; i < input.getPortCount(); i++) {
+    console.log(i, "--", input.getPortName(i));
+  }
+  let port = prompt("Select a MIDI input: ");
+  port = Number(port);
+
+  input.openPort(port);
+  console.log("listening to port", input.getPortName(port));
 
   const wss = new websockets.WebSocketServer({ port: 8080 });
   console.log("waiting for connection");
