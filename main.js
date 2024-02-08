@@ -39,7 +39,7 @@ async function main() {
         ccList.push(message[1]);
         setTimeout(() => {
           ccList.splice(ccList.indexOf(message[1]), 1);
-        }, 100);
+        }, 40);
       }
     });
   });
