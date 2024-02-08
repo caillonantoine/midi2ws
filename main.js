@@ -16,7 +16,7 @@ async function main() {
   console.log("listening to port", input.getPortName(port));
 
   const wss = new websockets.WebSocketServer({ port: 8080 });
-  console.log("waiting for connection");
+  console.log("waiting for connection (ws://localhost:8080)");
   wss.on("connection", (ws) => {
     let ccList = [];
     console.log("connection established !");
