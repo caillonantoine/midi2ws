@@ -16,14 +16,7 @@ async function main() {
   port = Number(port);
   input.openPort(port);
   input.on("message", (deltaTime, message) => {
-    let ccIndex = ccList.indexOf(message[1]);
-    if (ccIndex == -1) {
-      console.log("CC", message[1], "->", message[2]);
-      ccList.push(message[1]);
-      setTimeout(() => {
-        ccList.splice(ccList.indexOf(message[1]), 1);
-      }, rateLimiter);
-    }
+    console.log("CC", message[1], "->", message[2]);
   });
   console.log("listening to port", input.getPortName(port));
 
@@ -32,11 +25,12 @@ async function main() {
   console.log("waiting for connection (ws://localhost:8080)");
   wss.on("connection", (ws) => {
     console.log("connection established !");
+    input.removeAllListeners();
     input.on("message", (deltaTime, message) => {
       let ccIndex = ccList.indexOf(message[1]);
       if (ccIndex == -1) {
         ws.send(JSON.stringify(message));
-        console.log("CC", message[1], "->", message[2]);
+        console.log("sending CC", message[1], "->", message[2]);
         ccList.push(message[1]);
         setTimeout(() => {
           ccList.splice(ccList.indexOf(message[1]), 1);
