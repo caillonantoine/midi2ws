@@ -7,26 +7,28 @@ let rateLimiter = 40;
 
 async function main() {
   // select and open midi port
-  const input = new midi.Input();
+  const midiInput = new midi.Input();
   console.log("Available midi inputs:");
-  for (let i = 0; i < input.getPortCount(); i++) {
-    console.log(i, "--", input.getPortName(i));
+  for (let i = 0; i < midiInput.getPortCount(); i++) {
+    console.log(i, "--", midiInput.getPortName(i));
   }
-  let port = prompt("Select a MIDI input: ");
+  let port = prompt("Select a MIDI midiInput: ");
   port = Number(port);
-  input.openPort(port);
-  input.on("message", (deltaTime, message) => {
+  midiInput.openPort(port);
+  midiInput.on("message", (deltaTime, message) => {
+    if (message[0] !== 176) return;
     console.log("CC", message[1], "->", message[2]);
   });
-  console.log("listening to port", input.getPortName(port));
+  console.log("listening to port", midiInput.getPortName(port));
 
   // starting websocket server
   const wss = new websockets.WebSocketServer({ port: 8080 });
   console.log("waiting for connection (ws://localhost:8080)");
   wss.on("connection", (ws) => {
     console.log("connection established !");
-    input.removeAllListeners();
-    input.on("message", (deltaTime, message) => {
+    midiInput.removeAllListeners();
+    midiInput.on("message", (deltaTime, message) => {
+      if (message[0] !== 176) return;
       let ccIndex = ccList.indexOf(message[1]);
       if (ccIndex == -1) {
         ws.send(JSON.stringify(message));
