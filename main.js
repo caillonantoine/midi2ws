@@ -39,6 +39,11 @@ function sendLinkState(ws) {
   );
 }
 
+function setLinkBPM(bpm) {
+  console.log("Changing bpm to", bpm);
+  link.bpm = bpm;
+}
+
 async function main() {
   // select and open midi port
   let midiInput = getMidiInput();
@@ -64,11 +69,17 @@ async function main() {
     });
 
     // metadata related handlers
-    ws.on("message", (data) => {
-      data = JSON.parse(data.toString());
+    ws.on("message", (msg) => {
+      let data = JSON.parse(msg.toString());
       switch (data.type) {
         case "linkState":
           sendLinkState(ws);
+          break;
+        case "setLinkBPM":
+          setLinkBPM(data.value);
+          break;
+        default:
+          break;
       }
     });
   });
