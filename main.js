@@ -35,6 +35,7 @@ function sendLinkState(ws) {
       phase: link.phase,
       bpm: link.bpm,
       time: Date.now(),
+      peers: link.getNumPeers(),
     })
   );
 }
@@ -77,8 +78,6 @@ async function main() {
           break;
         case "setLinkBPM":
           setLinkBPM(data.value);
-          break;
-        default:
           break;
       }
     });
