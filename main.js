@@ -1,30 +1,12 @@
 import midi from "midi";
 import { WebSocketServer } from "ws";
 import abletonlink from "abletonlink";
-import prompt from "prompt-sync";
 
 const link = new abletonlink();
 const wss = new WebSocketServer({ port: 8080 });
 
 let ccList = [];
 let rateLimiter = 40;
-
-function getMidiInput() {
-  const midiInput = new midi.Input();
-  console.log("Available midi inputs:");
-  for (let i = 0; i < midiInput.getPortCount(); i++) {
-    console.log(i, "--", midiInput.getPortName(i));
-  }
-  let port = prompt({ sigint: true })("Select a MIDI midiInput: ");
-  port = Number(port);
-  midiInput.openPort(port);
-  midiInput.on("message", (deltaTime, message) => {
-    if (message[0] !== 176) return;
-    console.log("CC", message[1], "->", message[2]);
-  });
-  console.log("listening to port", midiInput.getPortName(port));
-  return midiInput;
-}
 
 function sendLinkState(ws) {
   link.update();
@@ -46,10 +28,25 @@ function setLinkBPM(bpm) {
 }
 
 async function main() {
-  // select and open midi port
-  let midiInput = getMidiInput();
+  const midiInput = new midi.Input();
 
-  // starting websocket server
+  console.log("Available midi inputs:");
+  for (let i = 0; i < midiInput.getPortCount(); i++) {
+    console.log(i, "--", midiInput.getPortName(i));
+  }
+
+  let inputPort = 0;
+
+  if (process.argv.length === 3) {
+    inputPort = Number(process.argv[2]);
+  }
+
+  midiInput.openPort(inputPort);
+  midiInput.on("message", (deltaTime, message) => {
+    if (message[0] !== 176) return;
+    console.log("CC", message[1], "->", message[2]);
+  });
+  console.log("listening to port", midiInput.getPortName(inputPort)); // starting websocket server
   console.log("waiting for connection (ws://localhost:8080)");
 
   wss.on("connection", (ws) => {
