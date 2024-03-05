@@ -1,9 +1,13 @@
-import midi from "midi";
-import { WebSocketServer } from "ws";
-import abletonlink from "abletonlink";
+// import midi from "midi";
+// import { WebSocketServer } from "ws";
+// import abletonlink from "abletonlink";
+
+const midi = require("midi");
+const websockets = require("ws");
+const abletonlink = require("abletonlink");
 
 const link = new abletonlink();
-const wss = new WebSocketServer({ port: 8080 });
+const wss = new websockets.WebSocketServer({ port: 8080 });
 
 let ccList = [];
 let rateLimiter = 40;

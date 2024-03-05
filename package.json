@@ -1,7 +1,6 @@
 {
   "name": "midi_ws",
   "version": "1.0.0",
-  "type": "module",
   "description": "sends midi to colab using web sockets",
   "main": "main.js",
   "scripts": {
